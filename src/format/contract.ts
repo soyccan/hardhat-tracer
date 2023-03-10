@@ -50,11 +50,17 @@ export async function formatContract(
             )}`
           );
         }
-        return `${colorContract(artifact.contractName)}.${colorFunction(
+
+        if (deployedAddress)
+          dependencies.tracerEnv.nameTags[deployedAddress]
+            = dependencies.nameTags[deployedAddress]
+            = artifact.contractName ?? name.split(':')[1];
+
+        return `${colorContract(artifact.contractName ?? name.split(':')[1])}.${colorFunction(
           "constructor"
         )}${extra.length !== 0 ? `{${extra.join(",")}}` : ""}(${inputArgs})${
           deployedAddress
-            ? ` => (${formatParam(deployedAddress, dependencies)})`
+            ? ` => (${deployedAddress})`
             : ""
         }`;
       } catch {}
@@ -63,5 +69,5 @@ export async function formatContract(
 
   return `${colorContract("UnknownContract")}(${colorKey("deployCodeSize=")}${
     arrayify(code).length
-  })`;
+  }) => (${deployedAddress})`;
 }

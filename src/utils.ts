@@ -184,7 +184,9 @@ export function compareBytecode(
   if (typeof artifactBytecode === "string")
     artifactBytecode = artifactBytecode
       .replace(/\_\_\$/g, "000")
-      .replace(/\$\_\_/g, "000");
+      .replace(/\$\_\_/g, "000")
+      .replace(/^0x/, "");
+  contractBytecode = contractBytecode.replace(/^0x/, "");
 
   let matchedBytes = 0;
   for (let i = 0; i < artifactBytecode.length; i++) {

@@ -32,8 +32,8 @@ export async function formatLog(
     const iface = new Interface(artifact.abi);
 
     // try to find the contract name
-    if (compareBytecode(artifact.deployedBytecode, code ?? "0x") > 0.5) {
-      contractName = artifact.contractName;
+    if (compareBytecode(artifact.deployedBytecode ?? artifact.bytecode, code ?? "0x") > 0.5) {
+      contractName = artifact.contractName ?? name.split(':')[1];
     }
 
     // try to parse the arguments
