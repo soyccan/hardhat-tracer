@@ -3,7 +3,7 @@ import { arrayify, Interface } from "ethers/lib/utils";
 
 import { colorContract, colorFunction, colorKey } from "../colors";
 import { TracerDependenciesExtended } from "../types";
-import { compareBytecode } from "../utils";
+import { compareBytecode, parseHex } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -30,7 +30,7 @@ export async function formatContract(
       try {
         const constructorParamsDecoded = iface._decodeParams(
           iface.deploy.inputs,
-          "0x" + code.slice(artifact.bytecode.length)
+          "0x" + code.slice(parseHex(artifact.bytecode).length)
         );
         const inputArgs = formatResult(
           constructorParamsDecoded,
