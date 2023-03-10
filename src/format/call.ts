@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish, ethers } from "ethers";
-import { FunctionFragment, Interface, Result } from "ethers/lib/utils";
+import { FunctionFragment, Interface, Result, formatEther } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 
 import { colorContract, colorFunction, colorKey } from "../colors";
@@ -58,7 +58,7 @@ export async function formatCall(
 
   const extra = [];
   if ((value = BigNumber.from(value)).gt(0)) {
-    extra.push(`value: ${formatParam(value, dependencies)}`);
+    extra.push(`value: ${formatEther(value)}`);
   }
   if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
     extra.push(`gas: ${formatParam(gas, dependencies)}`);
