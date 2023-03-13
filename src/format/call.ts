@@ -30,12 +30,12 @@ export async function formatCall(
 
     // try to find the contract name
     if (
-      compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5 ||
+      compareBytecode(_artifact.deployedBytecode ?? _artifact.bytecode, toBytecode) > 0.5 ||
       (to === ethers.constants.AddressZero && toBytecode.length <= 2)
     ) {
       // if bytecode of "to" is the same as the deployed bytecode
       // we can use the artifact name
-      contractName = _artifact.contractName;
+      contractName = _artifact.contractName ?? name.split(':')[1];
     }
 
     // try to parse the arguments
@@ -101,12 +101,12 @@ export async function formatCall(
       "UnknownFunction"
     )}>${
       extra.length !== 0 ? `{${extra.join(",")}}` : ""
-    }(${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
+    }(${colorKey("to=")}${formatParam(to, dependencies)}, ${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
   } else {
     return `${colorFunction("UnknownContractAndFunction")}${
       extra.length !== 0 ? `{${extra.join(",")}}` : ""
     }(${colorKey(
       "to="
-    )}${to}, ${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
+    )}${formatParam(to, dependencies)}, ${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
   }
 }
