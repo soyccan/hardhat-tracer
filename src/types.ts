@@ -4,6 +4,10 @@ export interface NameTags {
   [address: string]: string;
 }
 
+export interface ArtifactNames {
+  [address: string]: string;
+}
+
 export interface TracerEnvUser {
   enabled?: boolean;
   logs?: boolean;
@@ -13,6 +17,7 @@ export interface TracerEnvUser {
   gasCost?: boolean;
   opcodes?: string[];
   nameTags?: NameTags;
+  artifactNames: ArtifactNames;
 }
 
 export interface TracerEnv {
@@ -24,6 +29,7 @@ export interface TracerEnv {
   gasCost: boolean;
   opcodes: string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;
+  artifactNames: ArtifactNames;
   _internal: {
     printNameTagTip:
       | undefined // meaning "no need to print"
@@ -40,6 +46,7 @@ export interface TracerDependencies {
 
 export interface TracerDependenciesExtended extends TracerDependencies {
   nameTags: NameTags;
+  artifactNames: ArtifactNames;
 }
 
 export interface ProviderLike {

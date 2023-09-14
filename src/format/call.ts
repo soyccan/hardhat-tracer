@@ -4,7 +4,7 @@ import { Artifact } from "hardhat/types";
 
 import { colorContract, colorFunction, colorKey } from "../colors";
 import { TracerDependenciesExtended } from "../types";
-import { compareBytecode, getFromNameTags } from "../utils";
+import { compareBytecode, getFromNameTags, getFromArtifactNames } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -19,6 +19,9 @@ export async function formatCall(
 ) {
   const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+  let customArtifactName = getFromArtifactNames(to, dependencies);
+  if (customArtifactName)
+    names.push(customArtifactName);
 
   let contractName: string | undefined;
   let result: Result | undefined;
@@ -31,7 +34,8 @@ export async function formatCall(
     // try to find the contract name
     if (
       compareBytecode(_artifact.deployedBytecode ?? _artifact.bytecode, toBytecode) > 0.5 ||
-      (to === ethers.constants.AddressZero && toBytecode.length <= 2)
+      (to === ethers.constants.AddressZero && toBytecode.length <= 2) ||
+      name == customArtifactName
     ) {
       // if bytecode of "to" is the same as the deployed bytecode
       // we can use the artifact name

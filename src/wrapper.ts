@@ -12,6 +12,7 @@ import { printDebugTraceOrLogs } from "./print";
 import {
   ProviderLike,
   TracerDependencies,
+  TracerDependenciesExtended,
   TracerEnv,
   TracerEnvUser,
 } from "./types";
@@ -61,9 +62,10 @@ class TracerWrapper extends ProviderWrapper {
       }
       if (!this.txPrinted[hash] && receipt !== null) {
         this.txPrinted[hash] = true;
-        const dependenciesExtended = {
+        const dependenciesExtended: TracerDependenciesExtended = {
           ...this.dependencies,
           nameTags: { ...this.dependencies.tracerEnv.nameTags },
+          artifactNames: this.dependencies.tracerEnv.artifactNames,
         };
         try {
           await printDebugTraceOrLogs(hash, dependenciesExtended);
