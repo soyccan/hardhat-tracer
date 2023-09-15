@@ -3,7 +3,7 @@ import { Artifact } from "hardhat/types";
 
 import { colorContract, colorEvent } from "../colors";
 import { TracerDependenciesExtended } from "../types";
-import { compareBytecode, getFromNameTags } from "../utils";
+import { compareBytecode, getFromNameTags, getFromArtifactNames } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -16,13 +16,19 @@ export async function formatLog(
   const nameTag = currentAddress
     ? getFromNameTags(currentAddress, dependencies)
     : undefined;
+  let customArtifactName = currentAddress
+    ? getFromArtifactNames(currentAddress, dependencies)
+    : undefined;
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+  if (customArtifactName)
+    names.push(customArtifactName);
+
   const code =
     !nameTag && currentAddress
       ? ((await dependencies.provider.send("eth_getCode", [
-          currentAddress,
-          "latest",
-        ])) as string)
+        currentAddress,
+        "latest",
+      ])) as string)
       : undefined;
 
   let str: string | undefined;
@@ -32,7 +38,8 @@ export async function formatLog(
     const iface = new Interface(artifact.abi);
 
     // try to find the contract name
-    if (compareBytecode(artifact.deployedBytecode ?? artifact.bytecode, code ?? "0x") > 0.5) {
+    if (compareBytecode(artifact.deployedBytecode ?? artifact.bytecode, code ?? "0x") > 0.5
+        || name == customArtifactName) {
       contractName = artifact.contractName ?? name.split(':')[1];
     }
 
@@ -47,7 +54,7 @@ export async function formatLog(
         { decimals, isInput: true, shorten: false },
         dependencies
       )})`;
-    } catch {}
+    } catch { }
 
     // if we got both the contract name and arguments parsed so far, we can stop
     if (contractName && str) {
